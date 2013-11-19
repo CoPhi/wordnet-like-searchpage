@@ -4,7 +4,7 @@
 <div id="searchDiv" class="searchDivCls">
 <p class="searchP">Please type the word to search and a proper language</p>
 </br>
-<form id="searchFrm" action="view.php" method="get">
+<form id="searchFrm" action="view.php" method="post">
 <table class="searchTabCls" border="1">
 <tr>
     <td>
@@ -44,6 +44,9 @@
     </td>
   </tr> 
   </table>
+  <input type="text" name="myusername" value="" id="hiddenusername">
+  <input type="text" name="mypassword" value="" id="hiddenpasswd">
+  <input type="text" name="mynickname" value="" id="hiddennickname">
 </form>
 </div>
 <script language="Javascript">
@@ -74,17 +77,7 @@ function resetForm(){
     document.getElementById("leng").checked=true;
 }
 
-function resetForm(){
-    /*checkdate fields and decode*/
-    document.getElementById("searchTxt").value="";
-    document.getElementById("sbyw").checked=true;
-    document.getElementById("tlgrc").checked=true;
-    document.getElementById("tlita").checked=false;
-    document.getElementById("tllat").checked=false;
-    document.getElementById("tlara").checked=false;
-    document.getElementById("tleng").checked=false;
-    document.getElementById("leng").checked=true;
-}
+
 
 function disableAccordingTgtlang(id){
     var tgt=["leng","lita","lgrc","llat","lara"]

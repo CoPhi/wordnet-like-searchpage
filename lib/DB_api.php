@@ -42,6 +42,7 @@ function SwitchConnection($lang, $connection, $type){
     global $lat_database;
     global $ara_database;
     global $sidem_database;
+     global $login_database;
     global $connection;
     global$debug;
     
@@ -73,6 +74,8 @@ function SwitchConnection($lang, $connection, $type){
             $db=$side_grc_database; 
             }  
 }
+if ($type==2)
+    $db=$login_database;
 if ($debug==1)
     echo "\tSwitchConnection( $lang,$connection, $type) Connected to database $db</br>";
 mysql_select_db($db, $connection) or die('Could not select database.  '.$db);

@@ -8,8 +8,10 @@ require_once("./lib/DB_api.php");
 $param=$_POST['id'];
 $word=$_POST['value'];
 $definition=$_POST['def'];
+$type=$_POST['type'];
 $lang=$_POST['lang'];
-$user="riccardo.delgratta@gmail.com";
+$user=$_POST['username'];
+$nick=$_POST['nickname'];
 $dir="";
 if ($lang=="ara")
     $dir="rtl";
@@ -19,6 +21,7 @@ $result=getWordsFromSynsetId($main_conn,$WSS_VIEW,$param);
 $myDefDiv='<div id="div_result_sub_def_'.$param.'_'.$lang.'" class="divResultSubDef">';
 $myDefDiv=$myDefDiv."Definition: $definition </br></div>";
 $myLowDiv='<div id="div_result_sub_low_'.$param.'_'.$lang.'" class="divResultSubWords" >';
+$disabled="disabled";
 //$myLowDiv=$myLowDiv. "List of words</br>";
 for ($i=0; $i<count($result); $i++){
     $theword=$result[$i]['lemma'];
@@ -56,12 +59,14 @@ for ($i=0; $i<count($result); $i++){
     $myRelDiv=$myRelDiv." ".$str."</div>";
     echo $str;
 }
-if ($lang=="grc"){
+if ($type==1){
+    if ($nick!="")
+        $disabled="";
 $result=getWordsFromSynsetId($main_conn,$WSS_VIEW,$param);
 $myDefDiv='<div id="div_result_sub_form_'.$param.'_'.$lang.'" class="divResultSubDef">';
 $myDefDiv=$myDefDiv."Manage Results </br></div>";
 $strForm0="<form method='get' action='save.php'>";
-$strForm1="<input type='Submit' value='Update'></form>";
+$strForm1="<input type='Submit' value='Update' id =\"buttom_update_'.$param.'_'.$lang\" $disabled></form>";
 $myLowDiv='<div id="div_result_sub_form_low_'.$param.'_'.$lang.'" class="divResultSubWords">';
  
 //$myLowDiv=$myLowDiv. "List of words</br>";

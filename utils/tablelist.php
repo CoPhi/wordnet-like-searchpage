@@ -10,5 +10,7 @@ $REL_TAB="linktypes";
 $GRCWS_TAB="grcWs";
 $GRCMAP_TAB="grcMap";
 
+# login table
+$USER_TAB="users";
 
 ?>

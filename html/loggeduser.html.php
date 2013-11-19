@@ -1,33 +1,14 @@
 <?php
+// logged user. Loaded when the user paramter is set
+
 ?>
+
 <div id="div_main_login" class="divMainLogin">
-<div id ="div_login" class="divLoginCls">
-<table  class="tabLoginClass">
-<caption>Log to access editing stuff</caption>
-<tr>
-<td colspan="2">User Login</td>
-</tr>
-<tr>
-<td class="labelTdClass">Username:</td>
-<td class="fieldTdClass"><input name="myusername" type="text" id="myusername"  value="<?php echo $user;?>"></td>
-</tr>
-<Tr>
-<td class="labelTdClass">Password:</td>
-<td class="fieldTdClass"><input name="mypassword" type="password" id="mypassword" value="<?php echo $passwd;?>"></td>
-</tr>
-<td><input type="button" name="Submit" value="Login"  onclick="validateAndSubmitForm()"></td>
-<td>&nbsp;</td>
-<td>&nbsp;</td>
-<td>&nbsp;</td>
-</tr>
-</table>
+Logged as <?php echo $user ;?> <a href="javascript:logout();"> Logout </a>
+<div id ="div_login" class="divLoginCls"></div>
 </div>
 <div id="div_validate_form" class="divValidateFormCls">
 </div>
-</div>
-
-
-
 <script language="Javascript">
 /* get values for user and password
     if fine, then tries to connect
