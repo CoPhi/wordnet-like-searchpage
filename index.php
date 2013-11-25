@@ -7,7 +7,6 @@
 <title>Search page for wordnets</title>
 <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1/jquery.js"></script>
 <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jqueryui/1/jquery-ui.min.js"></script>
-<script src="./js/jquery.treeview.js" type="text/javascript"></script>
 <script type="text/javascript" src="./js/md5.js"></script>
 </head>
 <body>
@@ -19,35 +18,37 @@ require("./lib/DB_api.php");
 global $debug;
 $word="";
 $lang="";
-$tlang="";
-$word = $_POST['word'];
-$lang=$_POST['lang'];
-$word = $_POST['word'];
-$user=$_POST['user'];
-$passwd=$_POST['passwd'];
+$tlangs="";
+$user="";
+$nickname="";
+$passwd="";
+$type=0;
+
 $include_html=false;
 
-if (trim($user)===""){
-    $user = $_GET['user'];
-}
+/**
+Managing GET and POST variables
+The first time the index is executed all variables are empty
+*/
 
-if (trim($passwd)===""){
-    $passwd = $_GET['passwd'];
-}
+$username = (isset($_POST['username']) ? $_POST['username'] : $_GET['username']); 
+$word = (isset($_POST['elem']) ? $_POST['elem'] : $_GET['elem']); 
+$lang = (isset($_POST['lang']) ? $_POST['lang'] : $_GET['lang']); 
+$tlangs = (isset($_POST['tlang']) ? $_POST['tlang'] : $_GET['tlang']); 
+$nickname = (isset($_POST['nickname']) ? $_POST['nickname'] : $_GET['nickname']); 
+//$passwd = (isset($_POST['passwd']) ? $_POST['passwd'] : $_GET['passwd']); 
+$type = (isset($_POST['type']) ? $_POST['type'] : $_GET['type']); 
 
-if (trim($word)===""){
-    $word = $_GET['word'];
- }
- 
- if (trim($lang)===""){
-    $lang = $_GET['lang'];
-     }
- if (trim($tlang)===""){
-    $lang = $_GET['tlang'];
-     }
+
+
 //<-- login -->
 
-include('./html/loginform.html.php');
+if($username=="" AND $nickname==""){
+    include('./html/loginform.html.php');
+} else {
+    include('./html/loggeduser.html.php');
+}
+
 //<!-- end login -->
 //<!-- search -->
 include('./html/searchform.html.php');

@@ -22,7 +22,7 @@ for ($i=0; $i<count($result); $i++){
         $pos=$temp[$j]['pos'];
         $definition=$temp[$j]['definition'];
         $definition=addslashes($definition);
-        $myStr="<a href=\"javascript:showResBySynsetId('$mapped','','$definition','$lang',1);\">".$mapped."</a>&nbsp; (".$pos.") ".$definition;
+        $myStr="<a href=\"javascript:showResBySynsetId('$mapped','','$definition','$lang','$pos',1);\">".$mapped."</a>&nbsp; (".$pos.") ".$definition;
         $mapped=$myStr;
         }
     if ($i==0)

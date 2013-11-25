@@ -154,6 +154,71 @@ function getDefPosFromSynsetId($connection, $table,$id){
 }
 
 /*
+returns the list of synsetid definition and pos from the word
+table: synsets
+*/
+function getXPosGenerationRule($connection, $table,$lang,$pos_1,$pos_2){
+        global $debug;
+        $lists = array();
+        $myquery = "SELECT distinct rule FROM " . $table . " where pos_1 = '$pos_1'  and pos_2='$pos_2' and lang='$lang';";
+        //$myquery = "SELECT distinct synsetid, definition, pos FROM " . $table . " where wordidmd5 = md5('$word') ;";
+          //$myquery = "SELECT distinct synsetid, definition, pos FROM " . $table . " LIMIT 10;";
+		mysql_query("SET character_set_results = 'utf8', character_set_client = 'utf8', character_set_connection = 'utf8', character_set_database = 'utf8', character_set_server = 'utf8'", $connection);
+
+        if( $debug){
+                echo "\tgetXPosGenerationRule($connection , $table, $pos_1,$pos_2)</br>";
+                echo "\tExecuting ". $myquery. "<br/> ";
+        }
+        $result = mysql_query($myquery);
+        if ($result==FALSE) {
+            echo 'Invalid query: '.mysql_error();
+            }
+	
+	
+	
+      while($row=mysql_fetch_array($result)){
+		$info_obj = array();
+		$info_obj['rule'] = $row['rule'];
+		$lists[] = $info_obj;
+	}
+
+	//echo "XXXXXXXXXXXXXXXXXXXXX ".$res."</br>";
+	return $lists;
+}
+
+/*
+returns the mapped synset
+table: <lang>Map
+*/
+function getMappedSynsetFromTargetSynset($connection, $table,$id, $pos){
+        global $debug;
+        $lists = array();
+        $myquery = "SELECT distinct synsetid_1 FROM " . $table . " where synsetid_2 = '$id' and pos='$pos' ;";
+        //$myquery = "SELECT distinct synsetid, definition, pos FROM " . $table . " where wordidmd5 = md5('$word') ;";
+          //$myquery = "SELECT distinct synsetid, definition, pos FROM " . $table . " LIMIT 10;";
+		mysql_query("SET character_set_results = 'utf8', character_set_client = 'utf8', character_set_connection = 'utf8', character_set_database = 'utf8', character_set_server = 'utf8'", $connection);
+
+        if( $debug){
+                echo "\tgetMappedSynsetFromTargetSynset($connection , $table, $id)</br>";
+                echo "\tExecuting ". $myquery. "<br/> ";
+        }
+        $result = mysql_query($myquery);
+        if ($result==FALSE) {
+            echo 'Invalid query: '.mysql_error();
+            }
+	
+	
+	
+      while($row=mysql_fetch_array($result)){
+		$info_obj = array();
+		$info_obj['synsetid'] = $row['synsetid_1'];
+		$lists[] = $info_obj;
+	}
+
+	//echo "XXXXXXXXXXXXXXXXXXXXX ".$res."</br>";
+	return $lists;
+}
+/*
 returns the list of words from the synsetid
 view: wordsXsensesXsynsets
 */

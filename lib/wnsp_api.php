@@ -10,7 +10,7 @@ function getUserDetails($connection, $table,$user, $passwd){
         global $debug;
         $lists = array();
       
-        $myquery = "SELECT name FROM $table WHERE username='$user' and password='$passwd';";
+        $myquery = "SELECT nickname as name FROM $table WHERE username='$user' and password='$passwd';";
         //$myquery = "SELECT distinct synsetid, definition, pos FROM " . $table . " where wordidmd5 = md5('$word') ;";
           //$myquery = "SELECT distinct synsetid, definition, pos FROM " . $table . " LIMIT 10;";
 		mysql_query("SET character_set_results = 'utf8', character_set_client = 'utf8', character_set_connection = 'utf8', character_set_database = 'utf8', character_set_server = 'utf8'", $connection);
@@ -21,9 +21,13 @@ function getUserDetails($connection, $table,$user, $passwd){
         }
         $result = mysql_query($myquery);
         if ($result==FALSE) {
-            echo 'Invalid query: '.mysql_error();
+            if ($debug)
+                echo 'Invalid query: '.mysql_error();
+             $ret ="SQL Error";
+             //$ret =-1;
+             return $ret;
             }
-
+else {
 // Mysql_num_row is counting table row
 $count=mysql_num_rows($result);
 
@@ -44,7 +48,7 @@ else {
 }
 	return $ret;
 }
-
+}
 /*
 returns the list of languages a user can manage
 table: USER_GRANT_TAB
@@ -76,5 +80,29 @@ function getTargetlanguagesFromUser($connection, $table,$name,$username){
 
 	//echo "XXXXXXXXXXXXXXXXXXXXX ".$res."</br>";
 	return $lists;
+}
+
+/*
+Insert records the list of languages a user can manage
+table: USER_GRANT_TAB
+*/
+function doInsertRecordsIntoActivity($connection, $myquery){
+        global $debug;
+        $lists = array();
+        //$myquery = "SELECT distinct synsetid, definition, pos FROM " . $table . " where wordidmd5 = md5('$word') ;";
+          //$myquery = "SELECT distinct synsetid, definition, pos FROM " . $table . " LIMIT 10;";
+		mysql_query("SET character_set_results = 'utf8', character_set_client = 'utf8', character_set_connection = 'utf8', character_set_database = 'utf8', character_set_server = 'utf8'", $connection);
+
+        if( $debug){
+                echo "\tdoInsertRecordsIntoActivity($connection, $myquery)</br>";
+                echo "\tExecuting ". $myquery. "<br/> ";
+        }
+        $result = mysql_query($myquery);
+        if ($result==FALSE) {
+            echo 'Invalid query: '.mysql_error()."</br>";
+            return -1;
+            }
+	    return 0;
+	
 }
 ?>

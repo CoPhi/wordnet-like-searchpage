@@ -12,7 +12,7 @@ $str="";
 for ($i=0; $i<count($result); $i++){
     $definition=$result[$i]['definition'];
     $pos=$result[$i]['pos'];
-    $str="<a href=\"javascript:showResBySynsetId('<?php echo $param;?>','','<?php echo $definition;?>','<?php echo $lang;?>');\">".$param." </a>&nbsp;(".$pos.")";
+    $str="<a href=\"javascript:showResBySynsetId('<?php echo $param;?>','','<?php echo $definition;?>','<?php echo $lang;?>', '<?php echo $pos;?>',1);\">".$param." </a>&nbsp;(".$pos.")";
     echo $str."</br>";
 }
 /*
