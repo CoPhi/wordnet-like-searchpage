@@ -4,7 +4,7 @@
 ?>
 
 <div id="div_main_login" class="divMainLogin">
-Logged as <?php echo $user ;?> <a href="javascript:logout();"> Logout </a>
+Logged as <?php echo $nickname ;?> <a href="javascript:logout();"> Logout </a>
 <div id ="div_login" class="divLoginCls"></div>
 </div>
 <div id="div_validate_form" class="divValidateFormCls">
@@ -63,10 +63,11 @@ function validateAndSubmitForm() {
           maindiv.innerHTML="<i>"+jsonData1+"</i>";
           
           document.getElementById("hiddenusername").value=user;
-           document.getElementById("hiddenpasswd").value=passwd;
+           //document.getElementById("hiddenpasswd").value=passwd;
        }
         }
 }
+
 function logout(){
      var maindiv=document.getElementById("div_main_login");
      text='<div id ="div_login" class="divLoginCls"></br>';
@@ -74,12 +75,32 @@ text=text+'<table  class="tabLoginClass"><caption>Log to access editing stuff</c
 text=text+'<tr><td colspan="2">User Login</td></tr><tr>';
 text=text+'<td class="labelTdClass">Username:</td><td class="fieldTdClass"><input name="myusername" type="text" id="myusername"></td>';
 text=text+'</tr><Tr><td class="labelTdClass">Password:</td><td class="fieldTdClass"><input name="mypassword" type="password" id="mypassword"></td>';
+text=text+'</tr><Tr><td class="labelTdClass">Password:</td><td class="fieldTdClass"></td>';
 text=text+'</tr><td><input type="button" name="Submit" value="Login"  onclick="validateAndSubmitForm()"></td><td>&nbsp;</td>';
 text=text+'<td>&nbsp;</td><td>&nbsp;</td></tr></table></br>';
 text=text+'</div><div id="div_validate_form" class="divValidateFormCls"></div>';
      maindiv.innerHTML=text;
       document.getElementById("hiddenusername").value="";
-           document.getElementById("hiddenpasswd").value="";
            document.getElementById("hiddennickname").value="";
+            var tlangs = <?php echo json_encode($tlangs); ?>;  
+             if (tlangs != null){
+            for (i=0;i<tlangs.length;i++){
+              var lang=tlangs[i];
+              var id="button_update_"+lang;
+              var idTxt="user_text_"+lang;
+              
+              var elem=document.getElementById(id);
+             // alert ("-"+id+"-");
+              if (elem !=null){
+                elem.disabled=true;
+            }
+            
+             var elemTxt=document.getElementById(idTxt);
+             // alert ("-"+id+"-");
+              if (elemTxt !=null){
+                elemTxt.value="";
+                }
+              }
+        }
     }
 </script>

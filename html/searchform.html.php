@@ -1,39 +1,122 @@
 <?php
+
+// type of search
+$sbyw="";
+$sbys="";
+if($type==1)
+    $sbys="checked";
+if($type==0)
+    $sbyw="checked";
+    
+   // input languages 
+ $il_1  ="";
+ $il_2 ="";
+ $il_3  ="";
+ $il_4  ="";
+ $il_5  ="";
+ 
+ // disabled output languages
+  $old_grc  ="";
+ $old_lat ="";
+ $old_ita  ="";
+ $old_ara  ="";
+ $old_eng  ="";
+ if ($lang=="eng"){
+    $il_1="checked";
+    $old_eng  ="disabled";
+    }
+if ($lang=="grc"){
+    $il_2="checked";
+    $old_grc ="disabled";
+     //$il_1="";
+    }
+ if ($lang=="ita"){
+    $il_3="checked";
+    $old_ita ="disabled";
+     //$il_1="";
+    }
+if ($lang=="lat"){
+    $il_4="checked";
+    $old_lat ="disabled";
+     //$il_1="";
+    }
+if ($lang=="ara"){
+    $il_5="checked";
+    $old_ara ="disabled";
+     //$il_1="";
+}
+if (empty($lang)){
+     $il_1="checked";
+     $old_eng="disabled";
+     }
+
+// output languages 
+$num=count($tlangs);
+$ol_grc="";
+$ol_lat="";
+$ol_ita="";
+$ol_ara="";
+$ol_eng="";
+
+
+
+    // loop
+for ($i=0; $i<$num; $i++){
+
+        if ($tlangs[$i]=="grc")
+            $ol_grc="checked";
+        if ($tlangs[$i]=="lat")
+            $ol_lat="checked";   
+        if ($tlangs[$i]=="ita")
+            $ol_ita="checked";    
+        if ($tlangs[$i]=="ara")
+            $ol_ara="checked"; 
+        if ($tlangs[$i]=="eng")
+            $ol_eng="checked";    
+
+}
+
+if ($num==0)
+     $ol_grc="checked";
+
+ 
+/*if (true)
+    echo "USER: $user WORD: ".$word." TLANG: $tlang LANG $lang NICK: $nickname PASSWD $passwd $sbys $sbyw $lang $num";
+    */
 ?>
 
 <div id="searchDiv" class="searchDivCls">
-<p class="searchP">Please type the word to search and a proper language</p>
-</br>
-<form id="searchFrm" action="view.php" method="post">
+<p class="searchP">Please type the word or the synset to search. Please pecift the correct type of search and a proper input language as well as at least one output language</p>
+<form id="searchFrm" action="view.php" method="POST">
 <table class="searchTabCls" border="1">
 <tr>
     <td>
     <fieldset>
         <legend>Type the word or the synsetid</legend>
-        <input type="text" id="searchTxt" class="searchTxtCls" name="elem" value="">
-         Word<input type="radio" name="typeofsearch" value="0" checked id="sbyw"/>&nbsp;&nbsp;
-         Synsetid<input type="radio" name="typeofsearch" value="1" id="sbys"/>
+        <input type="text" id="searchTxt" class="searchTxtCls" name="elem" value="<?php echo $word; ?>">
+         Word<input type="radio" name="typeofsearch" value="0"  <?php echo  $sbyw; ?> id="sbyw"/>&nbsp;&nbsp;
+         Synsetid<input type="radio" name="typeofsearch" value="1"  <?php echo $sbys; ?> id="sbys"/>
          
         </fieldset>
     </td>
     <td>
         <fieldset>
         <legend>Select the input language</legend>
-        English <input type="radio" name="lang" value="eng" checked id="leng"onchange="disableAccordingTgtlang('leng');"/></br>
-        Greek  <input type="radio" name="lang" value="grc" id="lgrc" onchange="disableAccordingTgtlang('lgrc');"/></br>
-        Italian <input type="radio" name="lang" value="ita" id="lita" onchange="disableAccordingTgtlang('lita');"/></br>
-        Latin <input type="radio" name="lang" value="lat" id="llat" onchange="disableAccordingTgtlang('llat');"/></br>
-        Arabic <input type="radio" name="lang" value="ara" id="lara" onchange="disableAccordingTgtlang('lara');"/></br>
+        English <input type="radio" name="lang" value="eng" <?php echo $il_1; ?> id="leng" onchange="disableAccordingTgtlang('leng');"/></br>
+        Greek  <input type="radio" name="lang" value="grc"  <?php echo $il_2; ?> id="lgrc" onchange="disableAccordingTgtlang('lgrc');"/></br>
+        Italian <input type="radio" name="lang" value="ita" <?php echo $il_3; ?> id="lita" onchange="disableAccordingTgtlang('lita');"/></br>
+        Latin <input type="radio" name="lang" value="lat" <?php echo $il_4; ?> id="llat" onchange="disableAccordingTgtlang('llat');"/></br>
+        Arabic <input type="radio" name="lang" value="ara" <?php echo $il_5; ?> id="lara" onchange="disableAccordingTgtlang('lara');"/></br>
     </fieldset>
     </td>
     <td>
         <fieldset>
         <legend>Select the target languages</legend>
-        Greek <input type="checkBox" name="tlang[]" value="grc" checked id="tlgrc"/></br>
-        Latin <input type="checkBox" name="tlang[]" value="lat"  id="tllat"/></br>
-        Italian <input type="checkBox" name="tlang[]" value="ita"  id="tlita"/></br>
-        Arabic <input type="checkBox" name="tlang[]" value="ara" id="tlara" /></br>
-        English <input type="checkBox" name="tlang[]" value="eng"  id="tleng" disabled/></br>
+        Greek <input type="checkBox" name="tlang[]" value="grc"  <?php echo $ol_grc. " ".$old_grc; ?> id="tlgrc"/></br>
+        Latin <input type="checkBox" name="tlang[]" value="lat"  <?php echo $ol_lat. " ".$old_lat; ?> id="tllat"/></br>
+        Italian <input type="checkBox" name="tlang[]" value="ita" <?php echo $ol_ita. " ".$old_ita; ?> id="tlita"/></br>
+        Arabic <input type="checkBox" name="tlang[]" value="ara" <?php echo $ol_ara. " ".$old_ara; ?> id="tlara" /></br>
+        English <input type="checkBox" name="tlang[]" value="eng" <?php echo $ol_eng. " ".$old_eng; ?> id="tleng"/></br>
     </fieldset>
     </td>
  </tr>
@@ -44,9 +127,8 @@
     </td>
   </tr> 
   </table>
-  <input type="text" name="myusername" value="" id="hiddenusername">
-  <input type="text" name="mypassword" value="" id="hiddenpasswd">
-  <input type="text" name="mynickname" value="" id="hiddennickname">
+  <input type="hidden" name="myusername" value="<?php echo $username; ?>" id="hiddenusername"><!-- email -->
+  <input type="hidden" name="mynickname" value="<?php echo $nickname; ?>" id="hiddennickname"> 
 </form>
 </div>
 <script language="Javascript">
@@ -92,130 +174,6 @@ function disableAccordingTgtlang(id){
             document.getElementById(tcurrent).checked=false;
             }
     }
-}
-function utf8_encode (argString) {
-  // http://kevin.vanzonneveld.net
-  // +   original by: Webtoolkit.info (http://www.webtoolkit.info/)
-  // +   improved by: Kevin van Zonneveld (http://kevin.vanzonneveld.net)
-  // +   improved by: sowberry
-  // +    tweaked by: Jack
-  // +   bugfixed by: Onno Marsman
-  // +   improved by: Yves Sucaet
-  // +   bugfixed by: Onno Marsman
-  // +   bugfixed by: Ulrich
-  // +   bugfixed by: Rafal Kukawski
-  // +   improved by: kirilloid
-  // +   bugfixed by: kirilloid
-  // *     example 1: utf8_encode('Kevin van Zonneveld');
-  // *     returns 1: 'Kevin van Zonneveld'
-
-  if (argString === null || typeof argString === "undefined") {
-    return "";
-  }
-
-  var string = (argString + ''); // .replace(/\r\n/g, "\n").replace(/\r/g, "\n");
-  var utftext = '',
-    start, end, stringl = 0;
-
-  start = end = 0;
-  stringl = string.length;
-  for (var n = 0; n < stringl; n++) {
-    var c1 = string.charCodeAt(n);
-    var enc = null;
-
-    if (c1 < 128) {
-      end++;
-    } else if (c1 > 127 && c1 < 2048) {
-      enc = String.fromCharCode(
-         (c1 >> 6)        | 192,
-        ( c1        & 63) | 128
-      );
-    } else if (c1 & 0xF800 != 0xD800) {
-      enc = String.fromCharCode(
-         (c1 >> 12)       | 224,
-        ((c1 >> 6)  & 63) | 128,
-        ( c1        & 63) | 128
-      );
-    } else { // surrogate pairs
-      if (c1 & 0xFC00 != 0xD800) { throw new RangeError("Unmatched trail surrogate at " + n); }
-      var c2 = string.charCodeAt(++n);
-      if (c2 & 0xFC00 != 0xDC00) { throw new RangeError("Unmatched lead surrogate at " + (n-1)); }
-      c1 = ((c1 & 0x3FF) << 10) + (c2 & 0x3FF) + 0x10000;
-      enc = String.fromCharCode(
-         (c1 >> 18)       | 240,
-        ((c1 >> 12) & 63) | 128,
-        ((c1 >> 6)  & 63) | 128,
-        ( c1        & 63) | 128
-      );
-    }
-    if (enc !== null) {
-      if (end > start) {
-        utftext += string.slice(start, end);
-      }
-      utftext += enc;
-      start = end = n + 1;
-    }
-  }
-
-  if (end > start) {
-    utftext += string.slice(start, stringl);
-  }
-
-  return utftext;
-}
-
-function utf8_decode (str_data) {
-  // http://kevin.vanzonneveld.net
-  // +   original by: Webtoolkit.info (http://www.webtoolkit.info/)
-  // +      input by: Aman Gupta
-  // +   improved by: Kevin van Zonneveld (http://kevin.vanzonneveld.net)
-  // +   improved by: Norman "zEh" Fuchs
-  // +   bugfixed by: hitwork
-  // +   bugfixed by: Onno Marsman
-  // +      input by: Brett Zamir (http://brett-zamir.me)
-  // +   bugfixed by: Kevin van Zonneveld (http://kevin.vanzonneveld.net)
-  // +   bugfixed by: kirilloid
-  // *     example 1: utf8_decode('Kevin van Zonneveld');
-  // *     returns 1: 'Kevin van Zonneveld'
-
-  var tmp_arr = [],
-    i = 0,
-    ac = 0,
-    c1 = 0,
-    c2 = 0,
-    c3 = 0,
-    c4 = 0;
-
-  str_data += '';
-
-  while (i < str_data.length) {
-    c1 = str_data.charCodeAt(i);
-    if (c1 <= 191) {
-      tmp_arr[ac++] = String.fromCharCode(c1);
-      i++;
-    } else if (c1 <= 223) {
-      c2 = str_data.charCodeAt(i + 1);
-      tmp_arr[ac++] = String.fromCharCode(((c1 & 31) << 6) | (c2 & 63));
-      i += 2;
-    } else if (c1 <= 239) {
-      // http://en.wikipedia.org/wiki/UTF-8#Codepage_layout
-      c2 = str_data.charCodeAt(i + 1);
-      c3 = str_data.charCodeAt(i + 2);
-      tmp_arr[ac++] = String.fromCharCode(((c1 & 15) << 12) | ((c2 & 63) << 6) | (c3 & 63));
-      i += 3;
-    } else {
-      c2 = str_data.charCodeAt(i + 1);
-      c3 = str_data.charCodeAt(i + 2);
-      c4 = str_data.charCodeAt(i + 3);
-      c1 = ((c1 & 7) << 18) | ((c2 & 63) << 12) | ((c3 & 63) << 6) | (c4 & 63);
-      c1 -= 0x10000;
-      tmp_arr[ac++] = String.fromCharCode(0xD800 | ((c1>>10) & 0x3FF));
-      tmp_arr[ac++] = String.fromCharCode(0xDC00 | (c1 & 0x3FF));
-      i += 4;
-    }
-  }
-
-  return tmp_arr.join('');
 }
 
 
