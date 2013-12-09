@@ -87,13 +87,13 @@ if ($num==0)
 
 <div id="searchDiv" class="searchDivCls">
 <p class="searchP">Please type the word or the synset to search. Please pecift the correct type of search and a proper input language as well as at least one output language</p>
-<form id="searchFrm" action="view.php" method="POST">
+<form id="searchFrm" action="view.php" method="POST" name="searchFrm">
 <table class="searchTabCls" border="1">
 <tr>
     <td>
     <fieldset>
         <legend>Type the word or the synsetid</legend>
-        <input type="text" id="searchTxt" class="searchTxtCls" name="elem" value="<?php echo $word; ?>">
+        <input type="text" id="searchTxt" class="searchTxtCls" name="elem" value="<?php echo $word; ?>" placeholder='Type a word'>
          Word<input type="radio" name="typeofsearch" value="0"  <?php echo  $sbyw; ?> id="sbyw"/>&nbsp;&nbsp;
          Synsetid<input type="radio" name="typeofsearch" value="1"  <?php echo $sbys; ?> id="sbys"/>
          
@@ -102,11 +102,11 @@ if ($num==0)
     <td>
         <fieldset>
         <legend>Select the input language</legend>
-        English <input type="radio" name="lang" value="eng" <?php echo $il_1; ?> id="leng" onchange="disableAccordingTgtlang('leng');"/></br>
-        Greek  <input type="radio" name="lang" value="grc"  <?php echo $il_2; ?> id="lgrc" onchange="disableAccordingTgtlang('lgrc');"/></br>
-        Italian <input type="radio" name="lang" value="ita" <?php echo $il_3; ?> id="lita" onchange="disableAccordingTgtlang('lita');"/></br>
-        Latin <input type="radio" name="lang" value="lat" <?php echo $il_4; ?> id="llat" onchange="disableAccordingTgtlang('llat');"/></br>
-        Arabic <input type="radio" name="lang" value="ara" <?php echo $il_5; ?> id="lara" onchange="disableAccordingTgtlang('lara');"/></br>
+        English <input type="radio" name="lang" value="eng" <?php echo $il_1; ?> id="leng" onchange="disableAccordingTgtlang('leng'); getInputlanguage();"/></br>
+        Greek  <input type="radio" name="lang" value="grc"  <?php echo $il_2; ?> id="lgrc" onchange="disableAccordingTgtlang('lgrc'); getInputlanguage();"/></br>
+        Italian <input type="radio" name="lang" value="ita" <?php echo $il_3; ?> id="lita" onchange="disableAccordingTgtlang('lita'); getInputlanguage();"/></br>
+        Latin <input type="radio" name="lang" value="lat" <?php echo $il_4; ?> id="llat" onchange="disableAccordingTgtlang('llat'); getInputlanguage();"/></br>
+        Arabic <input type="radio" name="lang" value="ara" <?php echo $il_5; ?> id="lara" onchange="disableAccordingTgtlang('lara'); getInputlanguage();"/></br>
     </fieldset>
     </td>
     <td>
@@ -129,9 +129,56 @@ if ($num==0)
   </table>
   <input type="hidden" name="myusername" value="<?php echo $username; ?>" id="hiddenusername"><!-- email -->
   <input type="hidden" name="mynickname" value="<?php echo $nickname; ?>" id="hiddennickname"> 
+  <input type="hidden" name="myilang" value="eng" id="hiddenilang"> 
 </form>
 </div>
 <script language="Javascript">
+
+$(function() {
+   
+    $( "#searchTxt1" ).autocomplete(
+    {
+ 
+      source: "ajaxautocomplete.php?field=searchTxt&ilang="+$('#hiddenilang').val(),
+     // source: ["chingpo","flagpole","gpo","pingpong paddle","pingpong table",],
+      minLength: 1,
+    });
+});
+
+ $(function() {
+    $( ".searchTxtCls" ).autocomplete({
+        source: function( request, response ) {
+        $.ajax({
+        url: "ajaxautocomplete.php?",
+        type: "GET",
+        dataType: "json",
+        data: {
+        ilang: $('#hiddenilang').val(),
+        field: "searchTxt",
+        maxRows: 12,
+        term: request.term
+    },
+    success: function( data ) {
+        response( $.map( data.low, function( item ) {
+            return {
+                //label: item.name + (item.adminName1 ? ", " + item.adminName1 : "") + ", " + item.countryName,
+                value: item.word
+            }
+        }));
+        }
+    });
+    },
+minLength: 3,
+select: function( event, ui ) {
+//alert( ui.item ?
+//"Selected: " + ui.item.label :
+//"Nothing selected, input was " + this.value);
+},
+
+});
+});
+////////////////////////////
+
 function formSubmit(){
     /*checkdate fields and decode*/
     var value=document.getElementById("searchTxt").value;
@@ -159,6 +206,18 @@ function resetForm(){
     document.getElementById("leng").checked=true;
 }
 
+function getInputlanguage(){
+     var ilangs = document['searchFrm'][ 'lang' ];
+     var ret="eng";
+     var elem=document.getElementById("hiddenilang");
+     for (i=0; i<ilangs.length; i++){
+        
+         if (ilangs[i].checked){
+                ret=ilangs[i].value;
+            }
+     }
+     elem.value=ret;
+    }
 
 
 function disableAccordingTgtlang(id){
