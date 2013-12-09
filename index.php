@@ -5,6 +5,7 @@
 <link href="./css/global.css" rel="stylesheet" type="text/css">
 <meta HTTP-EQUIV="content-type" CONTENT="text/html; charset=UTF-8">
 <title>Search page for wordnets</title>
+<link rel="stylesheet" href="http://code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css">
 <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1/jquery.js"></script>
 <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jqueryui/1/jquery-ui.min.js"></script>
 <script type="text/javascript" src="./js/md5.js"></script>

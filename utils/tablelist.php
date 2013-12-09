@@ -4,6 +4,7 @@
 $WSS_VIEW= 'wordsXsensesXsynsets';
 $SEMLINK_TAB="semlinks";
 $SYNSETS_TAB="synsets";
+$WORDS_TAB="words";
 $REL_TAB="linktypes";
 
 # side tables

@@ -12,10 +12,45 @@ $type=$_POST['type'];
 $lang=$_POST['lang'];
 $user=$_POST['username'];
 $nick=$_POST['nickname'];
+$pos=$_POST['pos'];
+$table=$lang."Map";
 $dir="";
 if ($lang=="ara")
     $dir="rtl";
+ $ilang='eng' ;
 $link=GetMyConnection();
+
+$maxnumofnewwords=3;
+
+/*
+getting xPosRule for type=1
+*/
+if($type==1){
+    $myconn=SwitchConnection($lang, $link, 1);
+    $xres=getMappedSynsetFromTargetSynset($myconn,$table,$param, $pos);
+    $syn1=$xres[0]['synsetid'];
+    $myconn=SwitchConnection($ilang, $link, 0);
+    $xres=getDefPosFromSynsetId($myconn,$SYNSETS_TAB,$syn1);
+    $pos1=$xres[0]['pos'];
+    echo "$param, $pos, $syn1, $pos1";
+    // get the rule
+    $myconn=SwitchConnection($lang, $link, 1);
+    $xres=getXPosGenerationRule($myconn,$XPOSRULE_TAB,$lang,$pos1, $pos);
+    $selstr="";
+    $strOption="";
+    if (count($xres)>0){
+        $selstr="<select name = 'rules[]'><option value='No Rule'>Please choose a rule</option>";
+        $newSelstr="<select name = 'newrules[]'><option value='No Rule'>Please choose a rule</option>";
+        for ($i=0; $i<count($xres); $i++){
+            $rule= $xres[$i]['rule'];
+            $strOption=$strOption."<option value = '$rule'>".$rule."</option>";
+        }
+        $selstr=$selstr.$strOption. "</select>";
+        $newSelstr=$newSelstr.$strOption. "</select>";
+        }
+//echo $selstr;
+     
+}
 $main_conn=SwitchConnection($lang, $link, 0);
 $result=getWordsFromSynsetId($main_conn,$WSS_VIEW,$param);
 $myDefDiv='<div id="div_result_sub_def_'.$param.'_'.$lang.'" class="divResultSubDef">';
@@ -65,8 +100,8 @@ if ($type==1){
 $result=getWordsFromSynsetId($main_conn,$WSS_VIEW,$param);
 $myDefDiv='<div id="div_result_sub_form_'.$param.'_'.$lang.'" class="divResultSubDef">';
 $myDefDiv=$myDefDiv."Manage Results </br></div>";
-$strForm0="<form method='get' action='save.php'>";
-$strForm1="<input type='Submit' value='Update' id =\"buttom_update_'.$param.'_'.$lang\" $disabled></form>";
+$strForm0="<form method='POST' action='save.php' id='form_$lang' name='form_$lang'>";
+
 $myLowDiv='<div id="div_result_sub_form_low_'.$param.'_'.$lang.'" class="divResultSubWords">';
  
 //$myLowDiv=$myLowDiv. "List of words</br>";
@@ -81,9 +116,13 @@ for ($i=0; $i<count($result); $i++){
     $thepos=$result[$i]['pos'];
     $thesense=$result[$i]['sensenum'];
     $validate=getFeatsFromSynsetId($side_conn,$GRCWS_TAB,$GRCMAP_TAB,'in',$param,$theword4id);
-    if (count($validate) == 0 OR count($validate) >1){
-        $value=-1;
+  /*  if (count($validate) == 0 OR count($validate) >1){
+        $value=2;
 } else {
+    */
+    if (count($validate) == 0 OR count($validate) >1){
+       $chk0="checked";
+       } else {
     $value=$validate[0]['feat_val'];
     $synsetid=$validate[0]['synsetid'];
     if ($value==0){
@@ -101,25 +140,46 @@ for ($i=0; $i<count($result); $i++){
           $chk1="";
       $chk0="";
         }
-    }
+   }
 
     $str =$theword."  (".$thesense.")  (".$thepos.") ";
  $strInput="<input type='hidden' value='$theword4id' name='words[]' /><input type='hidden' value='$thesense'  name='senses[]'/><input type='hidden' value='$thepos' name='poses[]'/> 
-   <input type='hidden' value='$param' name='synsets[]'/>";
+   <input type='hidden' value='$param' name='synsets[]'/><input type='hidden' value='Validate' name='acts[]'/>";
    $strRadio="&nbsp;Validate: <input type='radio' name='v_".$i."' value='0'  id='radio_result_sub_form_low_$param"."_".$lang."_".$theword4id."_0' $chk0/>&nbsp;0</input>";
    $strRadio=$strRadio."&nbsp;&nbsp;<input type='radio' name='v_".$i."' value='1'  id='radio_result_sub_form_low_$param"."_".$lang."_".$theword4id."_1' $chk1/>&nbsp;1</input>";
-    $strRadio=$strRadio."&nbsp;&nbsp;<input type='radio' name='v_".$i."' value='2'  id='radio_result_sub_form_low_$param"."_".$lang."_".$theword4id."_2' $chk2/>&nbsp;2</input></br>";
+    $strRadio=$strRadio."&nbsp;&nbsp;<input type='radio' name='v_".$i."' value='2'  id='radio_result_sub_form_low_$param"."_".$lang."_".$theword4id."_2' $chk2/>&nbsp;2</input>";
   /* $strInput="<input type='text' value='$theword4id' name='TXT_result_sub_form_low_name_$param"."_".$lang."_".$theword4id."' /><input type='text' value='$thesense'  name='TXT_result_sub_form_low_sense_$param"."_".$lang."_".$theword4id."'/><input type='text' value='$thepos' name='TXT_result_sub_form_low_pos_$param"."_".$lang."_".$theword4id."'/> 
    <input type='text' value='$param' name='TXT_result_sub_form_low_synset_$param"."_".$lang."_".$theword4id."'/>";
    $strRadio="&nbsp;Validate: <input type='radio' name='IN_result_sub_form_low_$param"."_".$lang."_".$theword4id."_0' value='0'  id='radio_result_sub_form_low_$param"."_".$lang."_".$theword4id."_0' $chk0/>&nbsp;0</input>";
    $strRadio=$strRadio."&nbsp;&nbsp;<input type='radio' name='radio_result_sub_form_low_$param"."_".$lang."_".$theword4id."_1' value='1'  id='radio_result_sub_form_low_$param"."_".$lang."_".$theword4id."_1' $chk1/>&nbsp;1</input>";
     $strRadio=$strRadio."&nbsp;&nbsp;<input type='radio' name='radio_result_sub_form_low_$param"."_".$lang."_".$theword4id."_2' value='2'  id='radio_result_sub_form_low_$param"."_".$lang."_".$theword4id."_2' $chk2/>&nbsp;2</input></br>";
   */
-    $strInput=$strInput. " ".$strRadio;
+    $strInput=$strInput. " ".$strRadio." ".$selstr."</br>";
     $str='<div id="div_result_sub_form_low_'.$param.'_'.$lang.'_'.$theword4id.'" class="divResultSubLow">'.$str.' '.$strInput.'</div>' ;
     $myLowDiv=$myLowDiv." ".$str."</div>";
 }
+$strForm1="<input type='Button' value='Save Changes' id =\"button_update_$lang\" $disabled onclick='saveMe(\"$lang\",\"$syn1\",\"$ilang\");'></form>";
+$strNewWord="</br></br>";
+$strNewWord=$strNewWord."<div id='div_manage_new_word_$lang' class='divNewWordCls'>
+    <div id='div_add_new_words_$lang' class='divNewWordCls' style='display:block'>
+        <a href='javascript:AddMoreLessWord(\"add\",\"$lang\");'>Add New Word(s) to Synset $param </a>&nbsp;&nbsp;
+        <a href='javascript:AddMoreLessWord(\"rm\",\"$lang\");'>Remove New Word(s) From Synset $param </a>&nbsp;&nbsp;
+        <input type='hidden' value='0' name='nwId' id='id_new_word_$lang' >";
+        $div="";
+for ($n=0; $n<$maxnumofnewwords; $n++){
+      $strNewRadio="&nbsp;Validate: <input type='radio' name='nv_".$n."' value='0'  id='radio_result_sub_form_low_$param"."_".$lang."_".$n."_0' />&nbsp;0</input>";
+   $strNewRadio=$strNewRadio."&nbsp;&nbsp;<input type='radio' name='nv_".$n."' value='1'  id='radio_result_sub_form_low_$param"."_".$lang."_".$n."_1' />&nbsp;1</input>";
+    $strNewRadio=$strNewRadio."&nbsp;&nbsp;<input type='radio' name='nv_".$n."' value='2'  id='radio_result_sub_form_low_$param"."_".$lang."_".$n."_2' checked/>&nbsp;2</input>";
+    $id="nw_".$lang."_".$n;
+    $newwordStr="<input type='text' value='' name='newwords[]' id='$id' class='newWordCls' placeholder='Type a new word  ($lang)' onclick='javascript:autocompleteme(\"$id\",\"$lang\");'/><input type='hidden' value=".time()."  name='newsenses[]'/><input type='text' value='$thepos' name='newposes[]' placeholder='Type a new pos'/><input type='hidden' value='$param' name='newsynsets[]'/>";
+    $div=$div."<div id='div_new_words_".$lang."_".$n."' style='display:none;'><input type='hidden' value='Add' name='newacts[]'/>".$newwordStr." ".$strNewRadio." ".$newSelstr."</div>";
+    }
+$strNewWord=$strNewWord.$div;
 $myStr=$myDefDiv."<p></p>".$myLowDiv;
-echo "<p></p>".$strForm0.$myStr."<input type = 'hidden' name = 'synsetid' value='$synsetid'><input type = 'hidden' name = 'lang' value='$lang'><input type = 'hidden' name = 'user' value='$user'>".$strForm1."<p></p>";
+$myjquery="<script></script>";
+echo "<p></p>".$strForm0.$myStr."<input type = 'hidden' name = 'synsetid' value='$syn1'><input type = 'hidden' name = 'ilang' value='$ilang'><input type = 'hidden' name = 'lang' value='$lang' id='hiddenlang'><input type = 'hidden' name = 'user' value='$user' id ='user_text_$lang'>".$strAddNewWord.$strNewWord.$strForm1."<p></p>".$myjquery;
 }
 ?>
+
+
+

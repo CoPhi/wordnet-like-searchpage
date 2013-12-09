@@ -51,8 +51,31 @@ $acts = (isset($_POST['acts']) ? $_POST['acts'] : $_GET['acts']);
 
 //values
 $vs = (isset($_POST['vs']) ? $_POST['vs'] : $_GET['vs']); 
+
+// $newposes
+$newposes = (isset($_POST['newposes']) ? $_POST['newposes'] : $_GET['newposes']); 
+
+// $newwords
+$newwords = (isset($_POST['newwords']) ? $_POST['newwords'] : $_GET['newwords']); 
+
+// $synsets
+ $newsynsets = (isset($_POST['newsynsets']) ? $_POST['newsynsets'] : $_GET['newsynsets']); 
+
+// $newsenses
+ $newsenses = (isset($_POST['newsenses']) ? $_POST['newsenses'] : $_GET['newsenses']); 
+
+// newrules
+$newrules = (isset($_POST['newrules']) ? $_POST['newrules'] : $_GET['newrules']); 
+
+//newactivities
+$newacts = (isset($_POST['newacts']) ? $_POST['newacts'] : $_GET['newacts']); 
+
+//newvalues
+$newvs = (isset($_POST['newvs']) ? $_POST['newvs'] : $_GET['newvs']); 
+
 // is everything fine
 $nw=count($words);
+$neww=count($newwords);
 $np=count($poses);
 $nsy=count($synsets);
 $nse=count($senses);
@@ -67,5 +90,22 @@ for($i=0; $i<$nw; $i++){
          $int=doInsertRecordsIntoActivity($link,$mystr);
          $resStr=$resStr. "Inserted: '$lang', '$words[$i]', '$poses[$i]','$senses[$i]', '$rules[$i]','$synsets[$i]', '$acts[$i]','$vs[$i]','$ilang','$synsetid','$user', with ret code: $int;</br>";
      }
-      echo $resStr;
+      echo $resStr."</br></hline></br>";
+      
+      $resStr="";
+     $insStr="Insert into $USER_ACT_TAB (lang,word,pos,sense,rule,synsetid,activity,value,mapping_lang,mapping_synsetid,username) VALUES (";
+for($i=0; $i<$neww; $i++){
+         $mystr=$insStr. "'$lang', '$newwords[$i]', '$newposes[$i]','$newsenses[$i]', '$newrules[$i]','$newsynsets[$i]', '$newacts[$i]','$newvs[$i]','$ilang','$synsetid','$user');";
+         $int=doInsertRecordsIntoActivity($link,$mystr);
+         $resStr=$resStr. "Inserted: '$lang', '$newwords[$i]', '$newposes[$i]','$newsenses[$i]', '$newrules[$i]','$newsynsets[$i]', '$newacts[$i]','$newvs[$i]','$ilang','$synsetid','$user', with ret code: $int;</br>";
+     }
+      echo $resStr."</br></hline></br>";
+      
+      foreach ($newwords as $nw){
+          echo "* $nw </br>";
+      }
+      
+      foreach ($newsenses as $nw){
+          echo "* $nw </br>";
+          }
 ?>

@@ -3,6 +3,7 @@
 <!-- div to go back -->
 <!-- MAIN DIV: RESULTS FROM SERACH PARAMETERS -->         
 <div id="div_result_main" class="divResultMainCls">
+<span>Expand
 <fieldset><legend>Results for searchtype: <b><i><?php echo $htype; ?></i></b> and item: <b><i><?php echo $value; ?></i></b> and input language: <b></i><?php echo $lang?></i></b></legend>
 <?php
 echo "Found ".count($res)." synsets containing $value </br>";
@@ -25,6 +26,7 @@ for ($i=0; $i<count($res); $i++){
 }
 ?>
 </fieldset>
+</span>
 </div> <!-- END MAIN DIV -->
 <p></p>
 <!-- DIV FOR WORDS AND RELATIONS -->
@@ -254,6 +256,7 @@ function saveMe(lang, synsetid, ilang){
     var rules = document[name][ 'rules[]' ];
     var acts = document[name][ 'acts[]' ];
     var hasRule=false;
+    var hasNewRule=false;
     var rl;
     var rArr;
     var myuser = document.getElementById("user_text_"+lang).value;
@@ -269,6 +272,90 @@ function saveMe(lang, synsetid, ilang){
             hasRule=true;
         }
    
+   
+   // MANAGING ADDITIONAL WORDS
+    var newwords = document[name][ 'newwords[]' ];
+    var newsynsets = document[name][ 'newsynsets[]' ];
+    var newsenses = document[name][ 'newsenses[]' ];
+    var newposes = document[name][ 'newposes[]' ];
+    var newacts = document[name][ 'newacts[]' ];
+    var newrules = document[name][ 'newrules[]' ];
+    var nwArr;
+    var nwl=0;
+    var myStr="-1";
+    var addMe=false;
+    for (k=0; k<newwords.length; k++){
+        var divid="div_new_words_"+lang+"_"+k
+        var  cdiv=document.getElementById(divid);
+        var cdisplay=cdiv.style.display
+        var nwTxtId="nw_"+lang+"_"+k
+        //alert (nwTxtId);
+        // add 1 to the true dimension by visibility
+        var cvalue=document.getElementById(nwTxtId).value;
+        if (cdisplay=="block" && cvalue!=""){
+            nwl=nwl+1;
+            myStr =myStr+"#"+k;
+            }
+        // alert (cdisplay);
+        }
+    // there is something visible
+    
+    //
+  if(nwl>0){
+   addMe=true;
+   //alert (myStr.split("#")+ " -# "+nwl+ " #- ");
+   var nwArr = new Array()
+   var nsyArr = new Array()
+   var nseArr = new Array()
+   var naArr = new Array()
+   var npArr = new Array()
+   var nrArr = new Array()
+   var nvsArr = new Array()
+   
+   var idx=myStr.split("#");
+   var idxl=idx.length;
+   
+  //  alert ("dim nwl"+nwl)
+   for (k=0; k<idxl; k++){
+       var getme=idx[k];
+      
+       if (getme>=0){
+       //     alert (getme + " " +k)
+            //nwArr[k]=newwords[getme].value;
+            nwArr.push(newwords[getme].value);
+            nsyArr.push(newsynsets[getme].value);
+            nseArr.push(newsenses[getme].value);
+            naArr.push(newacts[getme].value);
+            npArr.push(newposes[getme].value);
+            
+            if (newrules !=null)
+                hasNewRule=true;
+            if (hasNewRule){
+                nrArr.push(newrules[getme].value);
+              //  alert (idx[l]+" "+newrules[getme].value)
+        }
+           // managing validation value for new words
+            var vName="nv_"+getme;
+            
+            var radios = document[name][vName];
+          //  alert (vName+ ", "+radios.length);
+            for( j = 0; j < radios.length; j++ ) {
+               // alert (radios[j].value)
+                if( radios[j].checked ) {
+                //   alert( "checked "+radios[j].value+ ", for "+getme );
+                   nvsArr.push(radios[j].value);
+                }
+            }
+    }
+   
+    
+    }
+   
+   }
+   //alert ("dim nw "+nwArr.length)
+     for (m =0 ; m<   nwl; m++){
+        // alert (m)
+         }
     if (wl==syl && syl==pl && pl==sel && sel==al){
         var wArr=new Array(wl); //words
         var syArr=new Array(syl); // synsets
@@ -299,18 +386,30 @@ function saveMe(lang, synsetid, ilang){
                 if( radios[j].checked ) {
                    // alert( radios[j].value+ ", "+i );
                    vsArr[i]=radios[j].value;
-        }
-        
-          
-        }
-          
-            
+                }
+            }
         }
      var mydata="";
-     if (hasRule)
-        mydata={ words : wArr  , synsets : syArr, poses: pArr, senses: seArr, lang:lang, ilang:ilang, synsetid:synsetid, user:myuser, acts: aArr, rules: rArr, vs: vsArr}
-    else 
-        mydata={ words : wArr  , synsets : syArr, poses: pArr, senses: seArr, lang:lang, ilang:ilang, synsetid:synsetid, user:myuser, acts: aArr,vs: vsArr}
+     if (hasRule){
+         if (addMe){
+            if (hasNewRule)
+                mydata={ words : wArr  , synsets : syArr, poses: pArr, senses: seArr, lang:lang, ilang:ilang, synsetid:synsetid, user:myuser, acts: aArr, rules: rArr, vs: vsArr, newrules: nrArr,  newwords : nwArr  , newsynsets : nsyArr, newposes: npArr, newsenses: nseArr,newacts: naArr , newvs: nvsArr}
+            else 
+                mydata={ words : wArr  , synsets : syArr, poses: pArr, senses: seArr, lang:lang, ilang:ilang, synsetid:synsetid, user:myuser, acts: aArr, rules: rArr, vs: vsArr,  newwords : nwArr  , newsynsets : nsyArr, newposes: npArr, newsenses: nseArr,newacts: naArr, newvs: nvsArr}
+       } else {
+       mydata={ words : wArr  , synsets : syArr, poses: pArr, senses: seArr, lang:lang, ilang:ilang, synsetid:synsetid, user:myuser, acts: aArr, rules: rArr, vs: vsArr}
+        }
+    }
+    else {
+        if (addMe){
+            if (hasNewRule)
+                mydata={ words : wArr  , synsets : syArr, poses: pArr, senses: seArr, lang:lang, ilang:ilang, synsetid:synsetid, user:myuser, acts: aArr, vs: vsArr, newrules: nrArr,  newwords : nwArr  , newsynsets : nsyArr, newposes: npArr, newsenses: nseArr,newacts: naArr, newvs: nvsArr}
+            else 
+                 mydata={ words : wArr  , synsets : syArr, poses: pArr, senses: seArr, lang:lang, ilang:ilang, synsetid:synsetid, user:myuser, acts: aArr, vs: vsArr, newwords : nwArr  , newsynsets : nsyArr, newposes: npArr, newsenses: nseArr,newacts: naArr, newvs: nvsArr}
+       } else {
+            mydata={ words : wArr  , synsets : syArr, poses: pArr, senses: seArr, lang:lang, ilang:ilang, synsetid:synsetid, user:myuser, acts: aArr,vs: vsArr,newacts: naArr}
+        }
+    }
      var jsonData1 = $.ajax({
           url: "updateresults.php",
 		  type: "POST",
@@ -323,6 +422,39 @@ function saveMe(lang, synsetid, ilang){
 
     
     
-    }
+}
+var maxNewWord=3;
+function AddMoreLessWord(comm,lang) {
+    var strDivId="id_new_word_"+lang;
+    var strNewWordId="nw_"+lang+"_";
+    var last=document.getElementById(strDivId);
+    var lastId=last.value;
+    var lastId4jq=last.value;
+    var IntlastId=parseInt(lastId);
+    var div="div_new_words_"+lang+"_";
+	  if ((comm == "add") && (IntlastId < maxNewWord)) {
+        //alert ("adding " +lastId);
+	     div = div + lastId;
+	     which = document.getElementById(div);
+	     which.style.display="block";
+         IntlastId=IntlastId+1;
+         last.value=IntlastId;
+	  }
+	  if ((comm == "rm") && (IntlastId > 0)) {
+           IntlastId=IntlastId - 1;
+           lastId=IntlastId.toString();
+            strNewWordId=strNewWordId+lastId;
+            //alert (strNewWordId+ " "+lastId)
+            div = div + IntlastId;
+         // set the value to ""
+         var nw=document.getElementById(strNewWordId);
+         nw.value="";
+	     which = document.getElementById(div);
+	    which.style.display="none";
+         last.value=IntlastId;
+   }
+   
+}
 
- </script>  
+// various jqueries    
+    </script>  
