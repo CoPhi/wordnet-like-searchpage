@@ -1,0 +1,35 @@
+/* unvisited link */
+a:link {
+    color:#0000FF;
+    text-decoration:none;
+    } 
+ /* visited link */   
+a:visited {
+    color:#808080;
+    text-decoration:none;
+}
+/* mouse over link */
+a:hover {
+    color:#0000FF;
+    text-decoration:underline;
+} 
+/* selected link */ 
+a:active {
+    color:#0000FF;
+    text-decoration:underline;
+}  
+
+.labelTdClass{
+    width: 10%;
+}
+
+.tabLoginClass{
+    width: 50%;
+    border: 0px solid gray;
+}
+
+.divNewWordCls:a{
+  font-size:10px;
+}
+
+

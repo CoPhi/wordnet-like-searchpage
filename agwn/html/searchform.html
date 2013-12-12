@@ -1,0 +1,30 @@
+<div id="searchDiv" class="searchDivCls">
+<p class="searchP">Please type the word to search and a proper language</p>
+</br>
+<form id="searchFrm" action="view.php" method="get">
+<table class="searchTabCls" border="1">
+<tr>
+    <td>
+    <fieldset>
+        <legend>Type the word</legend>
+        <input type="text" id="searchTxt" class="searchTxtCls" name="word" value="">
+        </fieldset>
+    </td>
+    <td>
+        <fieldset>
+        <legend>Select the language</legend>
+        English <input type="radio" name="lang" value="eng" checked/>
+        Greek  <input type="radio" name="lang" value="grc"/>
+        Italian <input type="radio" name="lang" value="ita"/>
+    </fieldset>
+    </td>
+ </tr>
+ <tr>
+    <td colspan="2" >
+        <input type="submit" value="Search">
+    </td>
+  </tr> 
+  </table>
+  <input type="text" name="conn" value=<?php echo $link; ?>/>
+</form>
+</div>
