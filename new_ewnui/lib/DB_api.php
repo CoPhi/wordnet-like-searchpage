@@ -41,7 +41,9 @@ function SwitchConnection($lang, $connection, $type){
     global $side_grc_database;
     global $lat_database;
     global $ara_database;
+    global $hrv_database;
     global $mapiwn_database;
+    global $mapiliwn_database;
     global $sidem_database;
      global $login_database;
     global $connection;
@@ -60,9 +62,12 @@ function SwitchConnection($lang, $connection, $type){
          if ($lang==="lat"){
             $db=$lat_database; 
             } 
-              if ($lang==="ara"){
+        if ($lang==="ara"){
             $db=$ara_database; 
-            }    
+            } 
+         if ($lang==="hrv"){
+            $db=$hrv_database; 
+            }   
 }
     if ($type==1) {  //output language
      if ($lang==="eng"){
@@ -71,7 +76,7 @@ function SwitchConnection($lang, $connection, $type){
       if ($lang==="ita"){
             $db=$side_grc_database; 
         }
-       if ($lang==="grc" OR $lang==="lat" OR $lang=="ara" OR $lang=="eng"){
+       if ($lang==="grc" OR $lang==="lat" OR $lang=="ara" OR $lang=="eng" OR $lang=="hrv" ){
             $db=$side_grc_database; 
             }  
 }
@@ -81,9 +86,12 @@ if ($type==2)
   if ($type==3) {  //input language <> eng
       if ($lang==="ita"){
             $db=$mapiwn_database; 
+    }
+     if ($lang==="hrv"){
+            $db=$maphwn_database; 
         }
-       if ($lang==="grc" OR $lang==="lat" OR $lang=="ara"){
-            $db=$side_grc_database; 
+       if ($lang==="grc" OR $lang==="lat" OR $lang=="ara" OR $lang=="hrv" ){
+            $db=$mapiliwn_database; 
             }  
 }    
 if ($debug==1)
@@ -296,6 +304,8 @@ function getWordsFromSynsetId($connection, $table,$param){
 	return $lists;
 }
 
+
+
 /*
 returns the serialization of words from the synsetid
 view: wordsXsensesXsynsets
@@ -326,7 +336,9 @@ function getSerializedWordsFromSynsetId($connection, $table,$param, $word){
 		$info_obj = array();
         $w=$row['lemma'];
         if ($w==$word)
-            $w="<b><i>".$w."</i></b>";
+            //$w="<b><i>".$w."</i></b>";
+            $w=$w;
+            //$w= "<font color='red'>".$w."</font>"; 
         if ($c<=$limit){
              if($i<$c-1)
                 $str=$str.$w.", ";
@@ -346,6 +358,282 @@ function getSerializedWordsFromSynsetId($connection, $table,$param, $word){
     //echo $str;
 	return $str;
 }
+
+
+/*
+returns the serialization of words with different colors
+according to the language and sources
+lat and  db=2,3 color=red
+tab1: <lang>Ws
+tab2: <lang>Map
+tab3: <lang>SynsetXsynsetMap
+
+*/
+function getColoredSerializedXXXXWordsFromSources($connection, $tableMap, $tableWs, $table_3, $param, $ser_word,$lang){
+        global $debug;
+        $lists = array();
+        $limit=4;
+        $words = explode(",", unserialize($ser_word));
+        $ret=$ser_word;
+        $myquery="";
+        $myquery_1="";
+        $num=count($words);
+        //echo "XXXXX $num";
+        if ($num>0){
+            if ($num>$limit)
+                $num=$limit+1;
+            for ($j=0; $j<$num; $j++){
+                $words[$j]=str_replace("<font color='red'>","",$words[$j]);
+                $words[$j]=str_replace("</font>","",$words[$j]);
+                $w=trim($words[$j]);
+                // create the query
+                if ($j<$num-1){
+                     $myquery = $myquery." SELECT distinct word as lemma, feat_val as val FROM " . $tableWs . " w , ".$tableMap ." m where m.synsetid_2= '$param' and w.synsetid=m.synsetid_1 and feat_att='db' and word='$w' UNION ";
+                     $myquery = $myquery." SELECT distinct word as lemma, feat_val as val FROM " . $tableWs . " w , ".$table_3 ." m where m.synsetid_2= '$param' and w.synsetid=m.synsetid_1 and feat_att='db' and word='$w' UNION ";
+                    }else{
+                        $myquery = $myquery." SELECT distinct word as lemma , feat_val as val FROM " . $tableWs . " w , ".$tableMap ." m where m.synsetid_2= '$param' and w.synsetid=m.synsetid_1 and feat_att='db' and word='$w' UNION ";
+                        $myquery = $myquery." SELECT distinct word as lemma, feat_val as val FROM " . $tableWs . " w , ".$table_3 ." m where m.synsetid_2= '$param' and w.synsetid=m.synsetid_1 and feat_att='db' and word='$w' ORDER BY val desc;";
+                        }
+        }
+        
+        // exec 
+        	mysql_query("SET character_set_results = 'utf8', character_set_client = 'utf8', character_set_connection = 'utf8', character_set_database = 'utf8', character_set_server = 'utf8'", $connection);
+
+            if($debug){
+                echo "\tgetColoredSerializedWordsFromSources($connection , $table, $param,$ser_word,$lang)</br>";
+                echo "\tExecuting ". $myquery. "<br/>";
+            }
+            $result = mysql_query($myquery);
+            if ($result==FALSE) {
+                echo 'Invalid query: '.mysql_error();
+                }
+	 $str="";
+     $i=0;
+     //$c=mysql_num_rows($result);
+     $c=$num;
+    // echo "-$c-";
+      while($row=mysql_fetch_array($result)){
+          //echo "OK $lim $c";
+		$info_obj = array();
+        $w=$row['lemma'];
+        $val=$row['val'];
+        
+        if ($w==$word)
+            //$w="<b><i>".$w."</i></b>";
+            $w= "<font color='red'>".$w."</font>";   
+        if ($val==2 || $val==3)
+            //$w= "<font color='red'>".$w."</font>";    
+            $w= "<b><i>".$w."</i></b>";    
+        if ($c<=$limit){
+             if($i<$c-1)
+                $str=$str.$w.", ";
+            else
+                 $str=$str.$w;
+            }
+        if ($c>$limit){
+             if($i<$c-1){
+                
+                $str=$str." ".$w.", ";
+                }
+            else
+                 $str=$str." ".$w.", ... ";
+            }
+        $i++;
+	}
+    //echo $str;
+	return $str;
+            
+        }
+        if ($num==0 || mysql_num_rows($result)==0)  {
+            return $ser_word;
+            }
+        
+	
+}
+
+/*
+returns the serialization of words with different colors
+according to the language and sources
+lat and  db=2,3 color=red
+tab1: <lang>Ws
+tab2: <lang>Map
+tab3: <lang>SynsetXsynsetMap
+
+*/
+function getColoredSerializedWordsFromSources($connection, $tableMap, $tableWs, $table_3, $param, $ser_word,$lang){
+    global $debug;
+    $lists = array();
+    $limit=4;
+    $words = explode(",", unserialize($ser_word));
+    $ret=$ser_word;
+    $myquery="";
+    $myquery_1="";
+    $num=count($words);
+    $info_obj = array();
+    $list = array();
+    $list_0 = array();
+    $endStr="";
+    //echo "XXXXX ".$num."</br>";
+    if ($num>0){
+            if ($num>$limit+1){
+                $endStr="";
+                
+                }
+            // create the array 
+            for ($j=0; $j<$num; $j++){  
+                $words[$j]=str_replace("<font color='red'>","",$words[$j]);
+                $words[$j]=str_replace("</font>","",$words[$j]);
+                $w=trim($words[$j]);
+                $myquery = " SELECT distinct word as lemma, feat_val as val FROM " . $tableWs . " w , ".$tableMap ." m where m.synsetid_2= '$param' and w.synsetid=m.synsetid_1 and feat_att='db' and word='$w' UNION ";
+                $myquery = $myquery." SELECT distinct word as lemma, feat_val as val FROM " . $tableWs . " w , ".$table_3 ." m where m.synsetid_2= '$param' and w.synsetid=m.synsetid_1 and feat_att='db' and word='$w' ORDER BY val desc;";
+                
+                // exec the query
+                mysql_query("SET character_set_results = 'utf8', character_set_client = 'utf8', character_set_connection = 'utf8', character_set_database = 'utf8', character_set_server = 'utf8'", $connection);
+
+                if($debug){
+                    echo "\tgetColoredSerializedItaWordsFromSources($connection , $table, $param,$ser_word,$lang)</br>";
+                    echo "\tExecuting ". $myquery. "<br/>";
+                }
+                $result = mysql_query($myquery);
+                if ($result==FALSE) {
+                    echo 'Invalid query: '.mysql_error();
+            }
+             // check number of rows 
+            
+            if (mysql_num_rows($result)==0){
+                $info_obj['lemma']=$words[$j];
+                $info_obj['val']=0;
+                $list[]= $info_obj;
+            } else {
+                while($row=mysql_fetch_array($result)){   
+                    //echo "XXXXX ".mysql_num_rows($result)."</br>";
+                    $info_obj['lemma']=$row['lemma'];
+                    $info_obj['val']=$row['val'];   
+                    //$list[]=$info_obj;
+                    $list[]=array_merge($list,$info_obj);
+                } // end loop over results
+                
+        }
+        //echo "XXXX ".count($list);
+        //print_r($list);
+        $str="";
+            for($i=0; $i<count($list); $i++){
+                $w=$list[$i]['lemma'];
+                $val=$list[$i]['val'];
+               //echo "XXXX ".$w;
+               if ($val==2 || $val==3)
+                    $w="<b><i>".$w."</i></b>";
+               if ($i<count($list) -1){
+                $str=$str.$w.", ";
+               } else {
+                   $str=$str.$w.$endStr;
+                   }
+            }
+        } // end for 
+    } else{
+        return $ser_word;
+    }
+    return $str;
+}
+/*
+returns the serialization of words with different colors
+according to the language and sources
+lat and  db=2,3 color=red
+tab1: <lang>Ws
+tab2: <lang>Map
+tab3: <lang>SynsetXsynsetMap
+
+*/
+function getColoredSerializedXXXWordsFromSources($connection, $tableMap, $tableWs, $table_3, $param, $ser_word,$lang){
+        global $debug;
+        $lists = array();
+        $limit=4;
+        $words = explode(",", unserialize($ser_word));
+        $ret=$ser_word;
+        $myquery="";
+        $myquery_1="";
+        $num=count($words);
+        $info_obj = array();
+        if ($num>0){
+            if ($num>$limit)
+                $num=$limit+1;
+            $str="";
+            //echo "XXXXX $num";
+            for ($j=0; $j<$num; $j++){  
+                $words[$j]=str_replace("<font color='red'>","",$words[$j]);
+                $words[$j]=str_replace("</font>","",$words[$j]);
+                $w=trim($words[$j]);
+                $myquery = " SELECT distinct word as lemma, feat_val as val FROM " . $tableWs . " w , ".$tableMap ." m where m.synsetid_2= '$param' and w.synsetid=m.synsetid_1 and feat_att='db' and word='$w' UNION ";
+                $myquery = $myquery." SELECT distinct word as lemma, feat_val as val FROM " . $tableWs . " w , ".$table_3 ." m where m.synsetid_2= '$param' and w.synsetid=m.synsetid_1 and feat_att='db' and word='$w' ORDER BY val desc;";
+                
+                // exec the query
+                mysql_query("SET character_set_results = 'utf8', character_set_client = 'utf8', character_set_connection = 'utf8', character_set_database = 'utf8', character_set_server = 'utf8'", $connection);
+
+                if($debug){
+                    echo "\tgetColoredSerializedItaWordsFromSources($connection , $table, $param,$ser_word,$lang)</br>";
+                    echo "\tExecuting ". $myquery. "<br/>";
+                }
+                $result = mysql_query($myquery);
+                if ($result==FALSE) {
+                    echo 'Invalid query: '.mysql_error();
+            }
+            //echo "XXXXX ".mysql_num_rows($result)."</br>";
+            if (mysql_num_rows($result)==0){
+                echo "XXX VOID ".$words[$j]."</br>".$myquery."</br>";
+                $info_obj['lemma']=$words[$j];
+                $info_obj['val']=0;
+                    $str=$str." ".$w.", ";
+                    } else {
+                        // loop over the results
+           $c=$num;
+    // echo "-$c-";
+      while($row=mysql_fetch_array($result)){
+          //echo "OK $lim $c";
+        $w=$row['lemma'];
+        $val=$row['val'];
+        
+         $info_obj['lemma']=$row['lemma'];
+         $info_obj['val']=$row['val'];
+    }
+        for ($i=0; $i<count($info_obj); $i++){
+        if ($w==$word)
+            //$w="<b><i>".$w."</i></b>";
+            $w= "<font color='red'>".$w."</font>";   
+        if ($val==2 || $val==3)
+            //$w= "<font color='red'>".$w."</font>";    
+            $w= "<b><i>".$w."</i></b>";    
+        if ($c<=$limit){
+             if($j<$c-1)
+                $str=$str.$w.", ";
+            else
+                 $str=$str.$w;
+            }
+        if ($c>$limit){
+             if($j<$c-1){
+                
+                $str=$str." ".$w.", ";
+                }
+            else
+                 $str=$str." ".$w.", ... ";
+            }
+	}
+                }
+              
+        }
+        
+        // exec 
+        	
+
+            return $str;
+
+        
+	
+} else {
+    return $ser_word;
+    }
+
+}
+
 
 /*
 returns the list of relations from the synsetid

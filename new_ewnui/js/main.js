@@ -7,7 +7,7 @@ main JS functions
 disables the target languages according to the input language
 */
 function disableAccordingTgtlang(id){
-    var tgt=["leng","lita","lgrc","llat","lara"]
+    var tgt=["leng","lita","lgrc","llat","lara","lhrv"]
     document.getElementById(id).checked=true;
     for (i=0; i<tgt.length ; i++){
         var current=tgt[i];

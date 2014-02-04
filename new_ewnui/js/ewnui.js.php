@@ -68,6 +68,7 @@ function logout(){
     document.getElementById("tlita").checked=false;
     document.getElementById("tllat").checked=false;
     document.getElementById("tlara").checked=false;
+    document.getElementById("tlhrv").checked=false;
     document.getElementById("tleng").checked=false;
     document.getElementById("leng").checked=true;
     
@@ -76,6 +77,7 @@ function logout(){
     document.getElementById("tllat").disabled=false;
     document.getElementById("tlara").disabled=false;
     document.getElementById("tlgrc").disabled=false;
+    document.getElementById("tlhrv").disabled=false;
     gtlangs=new Array();
     //$("#targets").accordion("destroy");
 

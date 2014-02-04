@@ -1,6 +1,9 @@
 <?php
 
 global $tlangs;
+$table=$lang."Map";
+$table_2=$lang."Ws";
+$table_1=$lang."SynsetXsynsetMap";
 ?>
 
 
@@ -11,7 +14,7 @@ global $tlangs;
 
 <!--Results for searchtype: <b><i><?php echo $htype; ?></i></b> and item: <b><i><?php echo $value; ?></i></b> and input language: <b></i><?php echo $lang?></i></b></br> -->
 <?php
-echo "Found ".count($res)." synsets containing <b><i>$value </i></b> and input language: <b></i> $lang </i></b> </br>";
+echo "Found ".count($res)." synsets containing <b><font color='red'>$value </font></b> and input language: <b><font color='red'> $lang </font></b> </br>";
 ?>
 </br>
 <!-- each synset has its div: different id but same class to be furtherly styled -->
@@ -24,6 +27,10 @@ for ($i=0; $i<count($res); $i++){
     $definition = addslashes($definition);
     $pos=$res[$i]['pos'];
     $sw=$res[$i]['sw'];
+      if (($lang=='lat') || ($lang=='ita')){
+                $side_conn=SwitchConnection($lang, $link, 1);
+                 $sw=getColoredSerializedWordsFromSources($side_conn, $table, $table_2, $table_1,$id, serialize($sw),$lang );
+            }
     ?>
     <div id="div_result_main_<?php echo $id; ?>" class = "divResultMainCls_sub">
     <a href="javascript:showResBySynsetId('<?php echo $id;?>','<?php echo $value;?>','<?php echo $definition;?>','<?php echo $lang;?>','<?php echo $pos;?>',0);"><?php echo $id; ?></a>&nbsp; <?php echo "(".$pos.")"; ?>

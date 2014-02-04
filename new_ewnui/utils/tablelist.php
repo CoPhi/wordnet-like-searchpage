@@ -18,6 +18,12 @@ $XPOSRULE_TAB="xPosGenerationRule";
 #IWN
 $IWNWN30_ILI_TAB="iwn2wn30ililinks";
 
+#ILIWNMAPDB
+$HWNWN30_ILI_TAB="hwn2wn30ililinks";
+$GWNWN30_ILI_TAB="gwn2wn30ililinks";
+$LWNWN30_ILI_TAB="lwn2wn30ililinks";
+$AWNWN30_ILI_TAB="awn2wn30ililinks";
+
 # login table
 $USER_TAB="users";
 $USER_ACT_TAB="user_words_activity";

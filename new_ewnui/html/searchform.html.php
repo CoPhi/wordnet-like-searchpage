@@ -14,6 +14,7 @@ if($type==0)
  $il_3  ="";
  $il_4  ="";
  $il_5  ="";
+ $il_6  ="";
  
  // disabled output languages
   $old_grc  ="";
@@ -21,6 +22,8 @@ if($type==0)
  $old_ita  ="";
  $old_ara  ="";
  $old_eng  ="";
+ $old_hrv  ="";
+ 
  if ($lang=="eng"){
     $il_1="checked";
     $old_eng  ="disabled";
@@ -45,6 +48,12 @@ if ($lang=="ara"){
     $old_ara ="disabled";
      //$il_1="";
 }
+
+if ($lang=="hrv"){
+    $il_6="checked";
+    $old_hrv ="disabled";
+     //$il_1="";
+}
 if (empty($lang)){
      $il_1="checked";
      $old_eng="disabled";
@@ -57,6 +66,7 @@ $ol_lat="";
 $ol_ita="";
 $ol_ara="";
 $ol_eng="";
+$ol_hrv="";
 
 
 
@@ -71,6 +81,8 @@ for ($i=0; $i<$num; $i++){
             $ol_ita="checked";    
         if ($tlangs[$i]=="ara")
             $ol_ara="checked"; 
+        if ($tlangs[$i]=="hrv")
+            $ol_hrv="checked";     
         if ($tlangs[$i]=="eng")
             $ol_eng="checked";    
 
@@ -93,6 +105,7 @@ if ($num==0)
         Italian <input type="radio" name="lang" value="ita" <?php echo $il_3; ?> id="lita" onchange="disableAccordingTgtlang('lita'); getInputlanguage();"/></br>
         Latin <input type="radio" name="lang" value="lat" <?php echo $il_4; ?> id="llat" onchange="disableAccordingTgtlang('llat'); getInputlanguage();"/></br>
         Arabic <input type="radio" name="lang" value="ara" <?php echo $il_5; ?> id="lara" onchange="disableAccordingTgtlang('lara'); getInputlanguage();"/></br>
+        Croatian <input type="radio" name="lang" value="hrv" <?php echo $il_6; ?> id="lhrv" onchange="disableAccordingTgtlang('lhrv'); getInputlanguage();"/></br>
     </fieldset>
     </td>
     <td height="100%">
@@ -111,6 +124,7 @@ if ($num==0)
         Latin <input type="checkBox" name="tlang[]" value="lat"  <?php echo $ol_lat. " ".$old_lat; ?> id="tllat"/></br>
         Italian <input type="checkBox" name="tlang[]" value="ita" <?php echo $ol_ita. " ".$old_ita; ?> id="tlita"/></br>
         Arabic <input type="checkBox" name="tlang[]" value="ara" <?php echo $ol_ara. " ".$old_ara; ?> id="tlara" /></br>
+        Croatian <input type="checkBox" name="tlang[]" value="hrv" <?php echo $ol_ara. " ".$old_ara; ?> id="tlhrv" /></br>
         English <input type="checkBox" name="tlang[]" value="eng" <?php echo $ol_eng. " ".$old_eng; ?> id="tleng"/></br>
     </fieldset>
     </td>
